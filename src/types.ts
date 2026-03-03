@@ -5,10 +5,11 @@ export type OrderStatus = 'Order Received' | 'Preparing Files' | 'Printing' | 'B
 export interface Service {
   id: string;
   name: string;
-  description: string;
-  basePrice: number;
-  iconName: string; 
-  tier: 'Standard' | 'Premium';
+  price: number;        // Use 'price' to match your components
+  icon: any;            // Use 'icon' to match your components
+  description: string;  // Use 'description'
+  desc?: string;        // Add this as optional to stop the ServicesTab error
+  tier?: 'Standard' | 'Premium';
 }
 
 export interface Order {
