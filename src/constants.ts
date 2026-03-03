@@ -1,4 +1,5 @@
 // src/constants.ts
+import { CreditCard, Book } from 'lucide-react'; // Added this line
 import type { Service } from './types'; 
 
 export const SERVICES: Service[] = [
