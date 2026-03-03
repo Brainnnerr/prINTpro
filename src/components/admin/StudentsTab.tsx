@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
-  Users, Search, Mail, Trash2, 
-  Loader2, UserCheck, Ban,AlertTriangle, CheckCircle
+  Users, Search, Mail, Trash2,
+  Loader2, UserCheck, Ban,  AlertTriangle, CheckCircle
 } from 'lucide-react';
 
 export default function StudentsTab() {
