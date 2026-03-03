@@ -1,13 +1,14 @@
-import type { ReactNode } from 'react';
 
-export type OrderStatus = 'Submitted' | 'Printing' | 'Quality Check' | 'Ready for Pickup' | 'Completed';
+
+export type OrderStatus = 'Order Received' | 'Preparing Files' | 'Printing' | 'Binding/Finishing' | 'Ready for Pickup' | 'Completed';
 
 export interface Service {
   id: string;
   name: string;
-  desc: string;
-  price: number;
-  icon: ReactNode;
+  description: string;
+  basePrice: number;
+  iconName: string; 
+  tier: 'Standard' | 'Premium';
 }
 
 export interface Order {
