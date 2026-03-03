@@ -6,16 +6,18 @@ export const SERVICES: Service[] = [
     id: 's1', 
     name: 'Business Cards', 
     description: 'Luxury 400gsm stocks.', 
-    basePrice: 0.15, 
-    iconName: 'CreditCard', 
+    desc: 'Luxury 400gsm stocks.',
+    price: 0.15, 
+    icon: CreditCard, 
     tier: 'Standard' 
   },
   { 
     id: 's2', 
     name: 'Thesis Binding', 
     description: 'Hardbound with gold foil.', 
-    basePrice: 25.00, 
-    iconName: 'Book', 
+    desc: 'Hardbound with gold foil.',
+    price: 25.00, 
+    icon: Book, 
     tier: 'Premium' 
   }
 ];
