@@ -48,6 +48,33 @@ export default function OrderWizard({ service, onBack }: OrderWizardProps) {
     calculatedPrice: 0,
   });
 
+  // Inside OrderWizard component
+useEffect(() => {
+  // Load saved data on mount
+  const savedProgress = localStorage.getItem('printpro_wizard_progress');
+  if (savedProgress) {
+    const { savedStep, savedConfig } = JSON.parse(savedProgress);
+    setStep(savedStep);
+    // Note: Files cannot be saved to localStorage, so the user must re-select the file
+    setConfig(prev => ({ ...prev, ...savedConfig, file: null })); 
+  }
+}, []);
+
+useEffect(() => {
+  // Save progress whenever step or config (except the file) changes
+  const { file, ...configWithoutFile } = config;
+  localStorage.setItem('printpro_wizard_progress', JSON.stringify({
+    savedStep: step,
+    savedConfig: configWithoutFile
+  }));
+}, [step, config]);
+
+// Clear storage when the order is finished or user goes back
+const handleBackAndClear = () => {
+  localStorage.removeItem('printpro_wizard_progress');
+  onBack();
+};
+
   // 1. Check account status on component mount
   useEffect(() => {
     const verifyAccess = async () => {
@@ -246,13 +273,14 @@ export default function OrderWizard({ service, onBack }: OrderWizardProps) {
             </div>
           </div>
           {step < 4 && (
-            <button
-              onClick={onBack}
-              title="Close Wizard"
-              className="p-2 hover:bg-white/10 rounded-xl transition-all"
-            >
-              <X size={20} />
-            </button>
+           // Find your Header close button (around line 183)
+<button
+  onClick={handleBackAndClear} // Use this instead of onBack
+  title="Close Wizard"
+  className="p-2 hover:bg-white/10 rounded-xl transition-all"
+>
+  <X size={20} />
+</button>
           )}
         </div>
 
