@@ -5,7 +5,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import OrderWizard from './components/OrderWizard';
 import AuthModal from './components/AuthModal';
 import { supabase } from './lib/supabase';
-import { FileText, Check, Loader2, Image as ImageIcon, Zap } from 'lucide-react';
+import { FileText, Loader2, Image as ImageIcon, Zap } from 'lucide-react';
 import type { Service } from './types';
 
 const SERVICES: Service[] = [
