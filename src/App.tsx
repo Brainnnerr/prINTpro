@@ -7,29 +7,14 @@ import AuthModal from './components/AuthModal';
 import { supabase } from './lib/supabase';
 // Corrected imports to include all icons used in the SERVICES array
 import { 
-  FileText, Check, Loader2, CreditCard, 
-  BookOpen, Image as ImageIcon, ScrollText, Zap 
+  FileText, Check, Loader2,
+   Image as ImageIcon, Zap 
 } from 'lucide-react';
 import type { Service } from './types';
 
 // src/App.tsx (Lines 16-23)
 const SERVICES: Service[] = [
-  { 
-    id: 's1', 
-    name: 'Business Cards', 
-    description: 'Standard business cards.', 
-    desc: 'Standard business cards.', // Keep this for now to satisfy old components
-    price: 5.00, 
-    icon: <CreditCard size={20}/> 
-  },
-  { 
-    id: 's2', 
-    name: 'Thesis Hardbound', 
-    description: 'Gold-leaf lettering on leatherette.', 
-    desc: 'Gold-leaf lettering on leatherette.', 
-    price: 300.00, 
-    icon: <BookOpen size={20}/> 
-  },
+ 
   { 
     id: 's3', 
     name: 'Document Printing', 
@@ -40,27 +25,19 @@ const SERVICES: Service[] = [
   },
   { 
     id: 's4', 
-    name: 'ID Photos', 
+    name: 'RushID Photos', 
     description: 'Rush ID sets and combos.', 
     desc: 'Rush ID sets and combos.', 
     price: 35.00, 
-    icon: <ImageIcon size={20}/> 
+    icon: <Zap size={20}/> 
   },
   { 
     id: 's5', 
-    name: 'Marketing Flyers', 
-    description: 'Full-color brochures.', 
-    desc: 'Full-color brochures.', 
+    name: 'Photo Printing', 
+    description: 'Premium inkjet photo printing on smudge-proof photographic paper.', 
+    desc: 'Premium inkjet photo printing on smudge-proof photographic paper.', 
     price: 150.00, 
-    icon: <ScrollText size={20}/> 
-  },
-  { 
-    id: 's6', 
-    name: 'Custom Stickers', 
-    description: 'Waterproof vinyl stickers.', 
-    desc: 'Waterproof vinyl stickers.', 
-    price: 30.00, 
-    icon: <Zap size={18}/> 
+    icon: <ImageIcon size={20}/> 
   },
 ];
 
