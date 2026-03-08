@@ -5,16 +5,10 @@ import AdminDashboard from './pages/AdminDashboard';
 import OrderWizard from './components/OrderWizard';
 import AuthModal from './components/AuthModal';
 import { supabase } from './lib/supabase';
-// Corrected imports to include all icons used in the SERVICES array
-import { 
-  FileText, Check, Loader2,
-   Image as ImageIcon, Zap 
-} from 'lucide-react';
+import { FileText, Check, Loader2, Image as ImageIcon, Zap } from 'lucide-react';
 import type { Service } from './types';
 
-// src/App.tsx (Lines 16-23)
 const SERVICES: Service[] = [
- 
   { 
     id: 's3', 
     name: 'Document Printing', 
@@ -41,47 +35,47 @@ const SERVICES: Service[] = [
   },
 ];
 
-
 function App() {
-  const [view, setView] = useState<'home' | 'dashboard' | 'wizard' | 'admin'>('home');
+  // Persistence: Check localStorage for the last active view
+  const [view, setView] = useState<'home' | 'dashboard' | 'wizard' | 'admin'>(() => {
+    return (localStorage.getItem('printpro_current_view') as any) || 'home';
+  });
+  
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [showAuth, setShowAuth] = useState<boolean>(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
-// Inside handleUserRouting in App.tsx
-const handleUserRouting = async (user: any) => {
-  try {
-    if (user) {
-      setIsAuthenticated(true);
-      setShowAuth(false);
-      
-      // We check user_metadata instead of the profiles table
-      // This matches the metadata seen in your session: { is_admin: true }
-      const isAdmin = user.user_metadata?.is_admin === true;
+  // Sync view state to localStorage
+  useEffect(() => {
+    localStorage.setItem('printpro_current_view', view);
+  }, [view]);
 
-      if (isAdmin) {
-        setView('admin');
+  const handleUserRouting = async (user: any) => {
+    try {
+      if (user) {
+        setIsAuthenticated(true);
+        setShowAuth(false);
+        const isAdmin = user.user_metadata?.is_admin === true;
+        if (isAdmin) {
+          setView('admin');
+        } else if (view === 'home') {
+          setView('dashboard');
+        }
       } else {
-        setView('dashboard');
+        setIsAuthenticated(false);
+        setView('home');
       }
-    } else {
-      setIsAuthenticated(false);
-      setView('home');
-      setShowAuth(false);
+    } catch (err) {
+      console.error("Routing error:", err);
+      setView('dashboard'); 
+    } finally {
+      setIsInitializing(false); 
     }
-  } catch (err) {
-    console.error("Routing error:", err);
-    setView('dashboard'); 
-  } finally {
-    setIsInitializing(false); 
-  }
-};
-
+  };
 
   useEffect(() => {
     let isMounted = true;
-
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -96,18 +90,16 @@ const handleUserRouting = async (user: any) => {
         if (isMounted) setIsInitializing(false);
       }
     };
-
     initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!isMounted) return;
-
       if (event === 'SIGNED_IN' && session?.user) {
         await handleUserRouting(session.user);
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
+        localStorage.removeItem('printpro_current_view'); // Clear on logout
         setView('home');
-        setIsInitializing(false);
       }
     });
 
@@ -125,20 +117,8 @@ const handleUserRouting = async (user: any) => {
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-6">
-        <div className="relative">
-          <Loader2 className="animate-spin text-emerald-500" size={56} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Check className="text-emerald-200" size={20} />
-          </div>
-        </div>
-        <div className="text-center space-y-2">
-          <p className="text-[11px] font-black text-slate-900 uppercase tracking-[0.4em] animate-pulse">
-            Verifying Identity
-          </p>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-            Synchronizing with PrintPro Secure Servers
-          </p>
-        </div>
+        <Loader2 className="animate-spin text-emerald-500" size={56} />
+        <p className="text-[11px] font-black uppercase tracking-[0.4em]">Verifying Identity</p>
       </div>
     );
   }
@@ -155,26 +135,15 @@ const handleUserRouting = async (user: any) => {
           isAuthenticated={isAuthenticated} 
         />
       )}
-
-      {view === 'dashboard' && (
-        <Dashboard services={SERVICES} onSelectService={handleSelectService} />
-      )}
-
-      {view === 'admin' && (
-        <AdminDashboard />
-      )}
-
+      {view === 'dashboard' && <Dashboard services={SERVICES} onSelectService={handleSelectService} />}
+      {view === 'admin' && <AdminDashboard />}
       {view === 'wizard' && (
         <OrderWizard 
           service={selectedService} 
           onBack={() => setView('dashboard')} 
         />
       )}
-
-      <AuthModal 
-        isOpen={showAuth} 
-        onClose={() => setShowAuth(false)} 
-      />
+      <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
     </div>
   );
 }
