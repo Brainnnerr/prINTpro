@@ -112,14 +112,26 @@ export default function OrderWizard({ service, onBack }: OrderWizardProps) {
     return 1;
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setLoading(true);
+ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  // Small delay to let the mobile OS finish the file hand-off
+  setLoading(true);
+  
+  try {
     const pages = await countPages(file);
-    setConfig((prev) => ({ ...prev, file, pageCount: pages }));
+    setConfig((prev) => ({ 
+      ...prev, 
+      file: file, // Ensure the file is saved
+      pageCount: pages 
+    }));
+  } catch (error) {
+    console.error("File processing error", error);
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   const formatTimeAMPM = (time: string) => {
     if (!time) return "--:-- --";
@@ -432,16 +444,18 @@ export default function OrderWizard({ service, onBack }: OrderWizardProps) {
                 className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-emerald-500 font-bold text-xs"
               />
 
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-            
-                accept={service?.id === "s3"
-                  ? ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  : "image/jpeg,image/png"}
-                title="Upload your file"
-              />
+          
+<input
+  type="file"
+  key="print-file-input" // Add a static key here
+  ref={fileInputRef}
+  onChange={handleFileChange}
+  className="hidden" // Ensure it's hidden so the button handles it
+  accept={service?.id === "s3"
+    ? ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    : "image/jpeg,image/png"}
+  title="Upload your file"
+/>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
