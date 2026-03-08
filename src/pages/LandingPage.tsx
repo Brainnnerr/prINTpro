@@ -1,18 +1,15 @@
 import { useState } from "react";
 import {
     ArrowRight,
-    BookOpen,
     CheckCircle,
     ChevronLeft,
     ChevronRight,
-    CreditCard,
     FileText,
     Image as ImageIcon,
     Layers,
     Mail,
     Phone,
     Printer,
-    ScrollText,
     ShieldCheck,
     X,
     Zap,
@@ -42,14 +39,29 @@ export default function LandingPage({ onSelectService, isAuthenticated }: {
         "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=500",
     ];
 
-    const services = [
-        { id: "s1", name: "Business Cards", desc: "Premium 400gsm matte or glossy finish.", price: 0.15, icon: <CreditCard /> },
-        { id: "s2", name: "Thesis Printing", desc: "Hardbound with gold-stamped lettering.", price: 25.00, icon: <BookOpen /> },
-        { id: "s3", name: "Document Printing", desc: "Standard A4/Letter laser printing.", price: 0.05, icon: <FileText /> },
-        { id: "s4", name: "Rush ID Photos", desc: "Passport, 2x2, or 1x1 instant prints.", price: 2.00, icon: <ImageIcon /> },
-        { id: "s5", name: "Marketing Flyers", desc: "Full-color brochures and distribution flyers.", price: 0.25, icon: <ScrollText /> },
-        { id: "s6", name: "Custom Stickers", desc: "Waterproof die-cut vinyl stickers.", price: 0.50, icon: <Zap /> },
-    ];
+   const services = [
+  { 
+    id: "s3", 
+    name: "Document Printing", 
+    desc: "High-resolution laser printing for academic and professional documents. Supports Standard A4 (8.27\" x 11.69\") and Letter (8.5\" x 11\") sizes in both monochrome and full color.", 
+    price: 2.00, 
+    icon: <FileText /> 
+  },
+  { 
+    id: "s4", 
+    name: "Rush ID Photos", 
+    desc: "Express high-gloss ID processing with instant cutting. Available in standard Philippine government and school sizes: 2x2 inch (51x51mm), 1x1 inch (25x25mm), and Passport Size (35x45mm) with optional white background.", 
+    price: 25.00, 
+    icon: <Zap /> 
+  },
+  { 
+    id: "s5", 
+    name: "Photo Printing", 
+    desc: "Premium inkjet photo printing on smudge-proof photographic paper. Choose from standard frame sizes: 3R (3.5\"x5\"), 4R (4\"x6\"), and 5R (5\"x7\"). Perfect for high-quality memorialization and portfolios.", 
+    price: 15.00, 
+    icon: <ImageIcon /> 
+  },
+];
 
     const handleStartOrder = (service?: Service) => {
         if (!isAuthenticated) {
