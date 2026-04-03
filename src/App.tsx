@@ -41,15 +41,26 @@ function App() {
     return (localStorage.getItem('printpro_current_view') as any) || 'home';
   });
   
+  // New Persistence: Recover selected service on refresh
+  const [selectedService, setSelectedService] = useState<Service | null>(() => {
+    const saved = localStorage.getItem('printpro_selected_service');
+    // We look through our SERVICES array to find the match to ensure we get the Icon component back
+    return saved ? SERVICES.find(s => s.id === saved) || null : null;
+  });
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [showAuth, setShowAuth] = useState<boolean>(false);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // Sync view state to localStorage
+  // Sync view and selected service to localStorage
   useEffect(() => {
     localStorage.setItem('printpro_current_view', view);
-  }, [view]);
+    if (selectedService) {
+      localStorage.setItem('printpro_selected_service', selectedService.id);
+    } else {
+      localStorage.removeItem('printpro_selected_service');
+    }
+  }, [view, selectedService]);
 
   const handleUserRouting = async (user: any) => {
     try {
@@ -98,7 +109,8 @@ function App() {
         await handleUserRouting(session.user);
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
-        localStorage.removeItem('printpro_current_view'); // Clear on logout
+        localStorage.removeItem('printpro_current_view');
+        localStorage.removeItem('printpro_selected_service'); // Clear on logout
         setView('home');
       }
     });
@@ -112,6 +124,13 @@ function App() {
   const handleSelectService = (service: Service) => {
     setSelectedService(service);
     setView('wizard');
+  };
+
+  const handleBackToDashboard = () => {
+    setSelectedService(null);
+    localStorage.removeItem('printpro_selected_service');
+    localStorage.removeItem('printpro_wizard_progress');
+    setView('dashboard');
   };
 
   if (isInitializing) {
@@ -128,7 +147,10 @@ function App() {
       {view === 'home' && (
         <LandingPage 
           onSelectService={(s) => {
-            if (s) setSelectedService(s);
+            if (s) {
+              setSelectedService(s);
+              localStorage.setItem('printpro_selected_service', s.id); // Immediate save
+            }
             if (!isAuthenticated) setShowAuth(true);
             else setView('wizard');
           }} 
@@ -140,7 +162,7 @@ function App() {
       {view === 'wizard' && (
         <OrderWizard 
           service={selectedService} 
-          onBack={() => setView('dashboard')} 
+          onBack={handleBackToDashboard} 
         />
       )}
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
