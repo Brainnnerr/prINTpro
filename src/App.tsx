@@ -89,6 +89,13 @@ function App() {
     let isMounted = true;
     const initAuth = async () => {
       try {
+        // --- MOBILE FIX: CLEAR URL ERRORS ---
+        // This removes the #error=access_denied fragment from the URL bar
+        // This stops the white screen loop when returning from the file picker
+        if (window.location.hash.includes('error')) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         if (isMounted) {
           if (session?.user) {
